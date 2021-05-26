@@ -29,7 +29,6 @@ router.get('/preferences', auth, async (req, res) => {
     }
 
     try {
-        // const preferences = await Preference.find({ owner: req.user._id }) // below line achieves same goal
         await req.user.populate({
             path: 'preferences',
             options: {
