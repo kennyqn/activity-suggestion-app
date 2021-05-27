@@ -4,7 +4,9 @@ const express = require('express')
 require('./db/mongoose')
 const userRouter = require('./routers/user')
 const preferenceRouter = require('./routers/preference')
+const weatherRouter = require('./routers/weather')
 const suggestionRouter = require('./routers/suggestion')
+const placesRouter = require('./routers/places')
 const bookmarkRouter = require('./routers/bookmark')
 
 const app = express()
@@ -18,8 +20,14 @@ app.use(userRouter)
 // register preference router
 app.use(preferenceRouter)
 
+// register weather router
+app.use(weatherRouter)
+
 // register suggestion router
 app.use(suggestionRouter)
+
+// register places router
+app.use(placesRouter)
 
 // register bookmark router
 app.use(bookmarkRouter)
