@@ -6,7 +6,6 @@ const forecast = require('../utils/forecast.js')
 
 // GET 7 day forecast
 router.get('/weather', auth, async (req, res) => {
-    const _id = req.params.id
     try {
         address = req.query.address
         if (!address) {
