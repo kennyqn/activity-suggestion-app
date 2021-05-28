@@ -3,7 +3,7 @@ const router = new express.Router()
 const auth = require('../middleware/auth')
 const geocode = require('../utils/geocode.js')
 const forecast = require('../utils/forecast.js')
-const { HazardousConditions } = require('../consts/consts');
+const { HazardousConditions, ActivityDetails } = require('../consts/consts');
 
 // GET 7 day suggestions
 router.get('/suggestions', auth, async (req, res) => {
@@ -54,19 +54,29 @@ router.get('/suggestions', auth, async (req, res) => {
                     for (j = 0; j < req.user.preferences.length; j++) {
                         const prefMinTemp = req.user.preferences[j].minTemp;
                         const prefMaxTemp = req.user.preferences[j].maxTemp;
+                        const activity = req.user.preferences[j].activity;
                         if (req.user.preferences[j].time.morning) {
                             if (isSuggestedActivity(prefMinTemp, prefMaxTemp, morningAvgTemp, preferredWeatherConditions, weatherConditions)) {
-                                suggestedActivities_MORNING.push(req.user.preferences[j].activity)
+                                suggestedActivities_MORNING.push({
+                                    key: activity,
+                                    ...ActivityDetails.get(activity)
+                                })
                             }
                         }
                         if (req.user.preferences[j].time.afternoon) {
                             if (isSuggestedActivity(prefMinTemp, prefMaxTemp, afternoonAvgTemp, preferredWeatherConditions, weatherConditions)) {
-                                suggestedActivities_AFTERNOON.push(req.user.preferences[j].activity)
+                                suggestedActivities_AFTERNOON.push({
+                                    key: activity,
+                                    ...ActivityDetails.get(activity)
+                                })
                             }
                         }
                         if (req.user.preferences[j].time.evening) {
                             if (isSuggestedActivity(prefMinTemp, prefMaxTemp, eveningAvgTemp, preferredWeatherConditions, weatherConditions)) {
-                                suggestedActivities_EVENING.push(req.user.preferences[j].activity)
+                                suggestedActivities_EVENING.push({
+                                    key: activity,
+                                    ...ActivityDetails.get(activity)
+                                })
                             }
                         }
 
@@ -132,19 +142,29 @@ router.get('/suggestions/:id', auth, async (req, res) => {
                 for (i = 0; i < req.user.preferences.length; i++) {
                     const prefMinTemp = req.user.preferences[i].minTemp;
                     const prefMaxTemp = req.user.preferences[i].maxTemp;
+                    const activity = req.user.preferences[i].activity;
                     if (req.user.preferences[i].time.morning) {
                         if (isSuggestedActivity(prefMinTemp, prefMaxTemp, morningAvgTemp, preferredWeatherConditions, weatherConditions)) {
-                            suggestedActivities_MORNING.push(req.user.preferences[i].activity)
+                            suggestedActivities_MORNING.push({
+                                key: activity,
+                                ...ActivityDetails.get(activity)
+                            })
                         }
                     }
                     if (req.user.preferences[i].time.afternoon) {
                         if (isSuggestedActivity(prefMinTemp, prefMaxTemp, afternoonAvgTemp, preferredWeatherConditions, weatherConditions)) {
-                            suggestedActivities_AFTERNOON.push(req.user.preferences[i].activity)
+                            suggestedActivities_AFTERNOON.push({
+                                key: activity,
+                                ...ActivityDetails.get(activity)
+                            })
                         }
                     }
                     if (req.user.preferences[i].time.evening) {
                         if (isSuggestedActivity(prefMinTemp, prefMaxTemp, eveningAvgTemp, preferredWeatherConditions, weatherConditions)) {
-                            suggestedActivities_EVENING.push(req.user.preferences[i].activity)
+                            suggestedActivities_EVENING.push({
+                                key: activity,
+                                ...ActivityDetails.get(activity)
+                            })
                         }
                     }
                 }
