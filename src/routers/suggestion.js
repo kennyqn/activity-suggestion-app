@@ -28,7 +28,7 @@ router.get('/suggestions', auth, async (req, res) => {
                     error: error
                 })
             }
-            forecast(latitude, longitude, (error, forecastData) => {
+            forecast(latitude, longitude, false, (error, forecastData) => {
                 if (error) {
                     return res.send({
                         error: error
@@ -116,7 +116,7 @@ router.get('/suggestions/:id', auth, async (req, res) => {
                     error: error
                 })
             }
-            forecast(latitude, longitude, async (error, forecastData) => {
+            forecast(latitude, longitude, false, async (error, forecastData) => {
                 if (error) {
                     return res.send({
                         error: error
