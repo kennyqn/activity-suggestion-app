@@ -55,7 +55,7 @@ router.get('/suggestions', auth, async (req, res) => {
                         for (j = 0; j < req.user.preferences.length; j++) {
                             const prefMinTemp = req.user.preferences[j].minTemp;
                             const prefMaxTemp = req.user.preferences[j].maxTemp;
-                            const activity = req.user.preferences[j].activity;
+                            const activity = req.user.preferences[j].key;
                             let activityDetails = await Activity.findOne({key: activity})
 
                             if (!activityDetails) {
