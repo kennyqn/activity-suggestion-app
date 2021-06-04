@@ -153,8 +153,11 @@ router.get('/suggestions/:id', auth, async (req, res) => {
                     for (i = 0; i < req.user.preferences.length; i++) {
                         const prefMinTemp = req.user.preferences[i].minTemp;
                         const prefMaxTemp = req.user.preferences[i].maxTemp;
-                        const activity = req.user.preferences[i].activity;
+                        const activity = req.user.preferences[i].key;
                         let activityDetails = await Activity.findOne({key: activity})
+                        if (!activityDetails)  {
+                            throw new Error('Unable to retrieve activity details')
+                        }
                         if (req.user.preferences[i].time.morning) {
                             if (isSuggestedActivity(prefMinTemp, prefMaxTemp, morningAvgTemp, preferredWeatherConditions, weatherConditions)) {
                                 suggestedActivities_MORNING.push({
@@ -189,7 +192,7 @@ router.get('/suggestions/:id', auth, async (req, res) => {
                         eveningSuggestions: suggestedActivities_EVENING
                     })
                 } catch (e) {
-                    res.status(500).send()
+                    res.status(500).send(e)
                 }
 
             })
