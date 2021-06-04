@@ -57,8 +57,9 @@ router.get('/suggestions', auth, async (req, res) => {
                             const prefMaxTemp = req.user.preferences[j].maxTemp;
                             const activity = req.user.preferences[j].activity;
                             let activityDetails = await Activity.findOne({key: activity})
+                            console.log(activity)
                             if (!activityDetails) {
-                                throw new Error()
+                                throw new Error('Unable to retrieve activity details')
                             }
                             if (req.user.preferences[j].time.morning) {
                                 if (isSuggestedActivity(prefMinTemp, prefMaxTemp, morningAvgTemp, preferredWeatherConditions, weatherConditions)) {
@@ -98,7 +99,7 @@ router.get('/suggestions', auth, async (req, res) => {
                     }
                     res.send(weekActivitySuggestions)
                 } catch (e) {
-                    res.status(500).send()
+                    res.status(500).send(e)
                 }
             })
         })
