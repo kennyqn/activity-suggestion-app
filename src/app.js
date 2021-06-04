@@ -8,6 +8,7 @@ const weatherRouter = require('./routers/weather')
 const suggestionRouter = require('./routers/suggestion')
 const placesRouter = require('./routers/places')
 const bookmarkRouter = require('./routers/bookmark')
+const activityRouter = require('./routers/activity')
 
 const app = express()
 
@@ -31,5 +32,8 @@ app.use(placesRouter)
 
 // register bookmark router
 app.use(bookmarkRouter)
+
+// register activity router
+app.use(activityRouter)
 
 module.exports = app

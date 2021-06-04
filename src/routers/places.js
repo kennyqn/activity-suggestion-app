@@ -3,7 +3,7 @@ const router = new express.Router()
 const auth = require('../middleware/auth')
 const geocode = require('../utils/geocode.js')
 const searchForPlaces = require('../utils/search')
-const { ActivitySearchQueries } = require('../consts/consts');
+const Activity = require('../models/activity')
 
 router.get('/places', auth, async (req, res) => {
     try {
@@ -36,7 +36,11 @@ router.get('/places', auth, async (req, res) => {
                 })
             }
 
-            let placeData = await searchForPlaces(ActivitySearchQueries.get(activity), {latitude, longitude}, searchRadius)
+            let activityDetails = await Activity.findOne({key: activity})
+            if (!activityDetails) {
+                throw new Error()
+            }
+            let placeData = await searchForPlaces(activityDetails.searchQueries, {latitude, longitude}, searchRadius)
 
             res.send({
                 activity,

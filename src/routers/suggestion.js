@@ -3,7 +3,8 @@ const router = new express.Router()
 const auth = require('../middleware/auth')
 const geocode = require('../utils/geocode.js')
 const forecast = require('../utils/forecast.js')
-const { HazardousConditions, ActivityDetails } = require('../consts/consts');
+const { HazardousConditions } = require('../consts/consts');
+const Activity = require('../models/activity')
 
 // GET 7 day suggestions
 router.get('/suggestions', auth, async (req, res) => {
@@ -28,7 +29,7 @@ router.get('/suggestions', auth, async (req, res) => {
                     error: error
                 })
             }
-            forecast(latitude, longitude, false, (error, forecastData) => {
+            forecast(latitude, longitude, false, async (error, forecastData) => {
                 if (error) {
                     return res.send({
                         error: error
@@ -55,11 +56,16 @@ router.get('/suggestions', auth, async (req, res) => {
                         const prefMinTemp = req.user.preferences[j].minTemp;
                         const prefMaxTemp = req.user.preferences[j].maxTemp;
                         const activity = req.user.preferences[j].activity;
+                        let activityDetails = await Activity.findOne({key: activity})
+                        if (!activityDetails) {
+                            throw new Error()
+                        }
                         if (req.user.preferences[j].time.morning) {
                             if (isSuggestedActivity(prefMinTemp, prefMaxTemp, morningAvgTemp, preferredWeatherConditions, weatherConditions)) {
                                 suggestedActivities_MORNING.push({
                                     key: activity,
-                                    ...ActivityDetails.get(activity)
+                                    title: activityDetails.title,
+                                    backgroundImageURL: activityDetails.backgroundImageURL
                                 })
                             }
                         }
@@ -67,7 +73,8 @@ router.get('/suggestions', auth, async (req, res) => {
                             if (isSuggestedActivity(prefMinTemp, prefMaxTemp, afternoonAvgTemp, preferredWeatherConditions, weatherConditions)) {
                                 suggestedActivities_AFTERNOON.push({
                                     key: activity,
-                                    ...ActivityDetails.get(activity)
+                                    title: activityDetails.title,
+                                    backgroundImageURL: activityDetails.backgroundImageURL
                                 })
                             }
                         }
@@ -75,19 +82,19 @@ router.get('/suggestions', auth, async (req, res) => {
                             if (isSuggestedActivity(prefMinTemp, prefMaxTemp, eveningAvgTemp, preferredWeatherConditions, weatherConditions)) {
                                 suggestedActivities_EVENING.push({
                                     key: activity,
-                                    ...ActivityDetails.get(activity)
+                                    title: activityDetails.title,
+                                    backgroundImageURL: activityDetails.backgroundImageURL
                                 })
                             }
                         }
-
-                        weekActivitySuggestions.push({
-                            id: j,
-                            dayOfWeek,
-                            morningSuggestions: suggestedActivities_MORNING,
-                            afternoonSuggestions: suggestedActivities_AFTERNOON,
-                            eveningSuggestions: suggestedActivities_EVENING
-                        })
                     }
+                    weekActivitySuggestions.push({
+                        id: i,
+                        dayOfWeek,
+                        morningSuggestions: suggestedActivities_MORNING,
+                        afternoonSuggestions: suggestedActivities_AFTERNOON,
+                        eveningSuggestions: suggestedActivities_EVENING
+                    })
                 }
                 res.send(weekActivitySuggestions)
             })
@@ -143,11 +150,13 @@ router.get('/suggestions/:id', auth, async (req, res) => {
                     const prefMinTemp = req.user.preferences[i].minTemp;
                     const prefMaxTemp = req.user.preferences[i].maxTemp;
                     const activity = req.user.preferences[i].activity;
+                    let activityDetails = await Activity.findOne({key: activity})
                     if (req.user.preferences[i].time.morning) {
                         if (isSuggestedActivity(prefMinTemp, prefMaxTemp, morningAvgTemp, preferredWeatherConditions, weatherConditions)) {
                             suggestedActivities_MORNING.push({
                                 key: activity,
-                                ...ActivityDetails.get(activity)
+                                title: activityDetails.title,
+                                backgroundImageURL: activityDetails.backgroundImageURL
                             })
                         }
                     }
@@ -155,7 +164,8 @@ router.get('/suggestions/:id', auth, async (req, res) => {
                         if (isSuggestedActivity(prefMinTemp, prefMaxTemp, afternoonAvgTemp, preferredWeatherConditions, weatherConditions)) {
                             suggestedActivities_AFTERNOON.push({
                                 key: activity,
-                                ...ActivityDetails.get(activity)
+                                title: activityDetails.title,
+                                backgroundImageURL: activityDetails.backgroundImageURL
                             })
                         }
                     }
@@ -163,7 +173,8 @@ router.get('/suggestions/:id', auth, async (req, res) => {
                         if (isSuggestedActivity(prefMinTemp, prefMaxTemp, eveningAvgTemp, preferredWeatherConditions, weatherConditions)) {
                             suggestedActivities_EVENING.push({
                                 key: activity,
-                                ...ActivityDetails.get(activity)
+                                title: activityDetails.title,
+                                backgroundImageURL: activityDetails.backgroundImageURL
                             })
                         }
                     }

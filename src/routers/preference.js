@@ -4,15 +4,32 @@ const auth = require('../middleware/auth')
 const Preference = require('../models/preference')
 
 router.post('/preferences', auth, async (req, res) => {
-    const preference = new Preference({
-        ...req.body,
-        activity: req.body.activity.toLowerCase().replace(' ','_'),
-        owner: req.user._id
-    })
+    const chosenActivities = req.query.activities.split(',')
+    let chosenActivityDocuments = [];
+
     try {
+        if (chosenActivities.length > 0) {
+            chosenActivityDocuments = chosenActivities.map((activity) => {
+                return {
+                    activity: activity.toLowerCase().replace(' ','_'),
+                    owner: req.user._id
+                }
+            })
+
+            console.log()
+            response = await Preference.insertMany(chosenActivityDocuments)
+            return res.status(201).send(response)
+        }
+
+        const preference = new Preference({
+            ...req.body,
+            activity: req.body.activity.toLowerCase().replace(' ','_'),
+            owner: req.user._id
+        })
         await preference.save()
         res.status(201).send(preference)
     } catch (e) {
+        console.log(e)
         res.status(400).send()
     }
 })

@@ -8,19 +8,40 @@ const preferenceSchema = new mongoose.Schema({
     },
     minTemp: {
         type: Number,
-        required: true
+        required: true,
+        default: function() {
+            return 65;
+        }
     },
     maxTemp: {
         type: Number,
-        required: true
+        required: true,
+        default: function() {
+            return 75;
+        }
     },
     conditions: {
         type: mongoose.Schema.Types.Mixed,
-        required: true
+        required: true,
+        default: function() {
+            return {
+                clear: true,
+                snowing: true,
+                rainy: true,
+                cloudy: true
+            }
+        }
     },
     time: {
         type: mongoose.Schema.Types.Mixed,
-        required: true
+        required: true,
+        default: function() {
+            return {
+                morning: true,
+                afternoon: true,
+                evening: true
+            }
+        }
     },
     owner: {
         type: mongoose.Schema.Types.ObjectId,
