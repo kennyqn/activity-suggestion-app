@@ -13,14 +13,13 @@ router.post('/preferences', auth, async (req, res) => {
 
     try {
         if (chosenActivities.length > 0) {
-            chosenActivityDocuments = chosenActivities.map(async (activity) => {
-                let activityDetails = await Activity.findOne({key: activity.toLowerCase().replace(' ','_')})
-                return {
-                    key: activityDetails.key,
-                    title: activityDetails.title,
+            for (i = 0; i < chosenActivities.length; i++) {
+                chosenActivityDocuments.push({
+                    key: chosenActivities[i],
+                    title: keyToTitle(chosenActivities[i]),
                     owner: req.user._id
-                }
-            })
+                })
+            }
 
             response = await Preference.insertMany(chosenActivityDocuments)
             return res.status(201).send(response)
@@ -114,5 +113,13 @@ router.delete('/preferences/:id', auth, async (req, res) => {
         res.status(500).send()
     }
 })
+
+const keyToTitle = (key) => {
+    const splitKey = key.split('_');
+    upperCaseSplitKey = splitKey.map((word) => {
+        return word[0].toUpperCase() + word.substring(1);
+    })
+    return upperCaseSplitKey.join(' ');
+}
 
 module.exports = router
