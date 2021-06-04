@@ -35,68 +35,71 @@ router.get('/suggestions', auth, async (req, res) => {
                         error: error
                     })
                 }
-
-                let weekActivitySuggestions = [];
-                for (i = 0; i < forecastData.length; i++) {
-                    let suggestedActivities_MORNING = [];
-                    let suggestedActivities_AFTERNOON = [];
-                    let suggestedActivities_EVENING = [];
-
-                    let unix_timestamp = +forecastData[i].dt
-                    let date = new Date(unix_timestamp * 1000);
-                    let dayOfWeek = date.getDay()
-
-                    const morningAvgTemp = forecastData[i].temp.morn;
-                    const afternoonAvgTemp = forecastData[i].temp.day;
-                    const eveningAvgTemp = forecastData[i].temp.eve;
-
-                    const weatherConditions = forecastData[i].weather;
-                    const preferredWeatherConditions = req.user.preferences.conditions;
-                    for (j = 0; j < req.user.preferences.length; j++) {
-                        const prefMinTemp = req.user.preferences[j].minTemp;
-                        const prefMaxTemp = req.user.preferences[j].maxTemp;
-                        const activity = req.user.preferences[j].activity;
-                        let activityDetails = await Activity.findOne({key: activity})
-                        if (!activityDetails) {
-                            throw new Error()
-                        }
-                        if (req.user.preferences[j].time.morning) {
-                            if (isSuggestedActivity(prefMinTemp, prefMaxTemp, morningAvgTemp, preferredWeatherConditions, weatherConditions)) {
-                                suggestedActivities_MORNING.push({
-                                    key: activity,
-                                    title: activityDetails.title,
-                                    backgroundImageURL: activityDetails.backgroundImageURL
-                                })
+                try {
+                    let weekActivitySuggestions = [];
+                    for (i = 0; i < forecastData.length; i++) {
+                        let suggestedActivities_MORNING = [];
+                        let suggestedActivities_AFTERNOON = [];
+                        let suggestedActivities_EVENING = [];
+    
+                        let unix_timestamp = +forecastData[i].dt
+                        let date = new Date(unix_timestamp * 1000);
+                        let dayOfWeek = date.getDay()
+    
+                        const morningAvgTemp = forecastData[i].temp.morn;
+                        const afternoonAvgTemp = forecastData[i].temp.day;
+                        const eveningAvgTemp = forecastData[i].temp.eve;
+    
+                        const weatherConditions = forecastData[i].weather;
+                        const preferredWeatherConditions = req.user.preferences.conditions;
+                        for (j = 0; j < req.user.preferences.length; j++) {
+                            const prefMinTemp = req.user.preferences[j].minTemp;
+                            const prefMaxTemp = req.user.preferences[j].maxTemp;
+                            const activity = req.user.preferences[j].activity;
+                            let activityDetails = await Activity.findOne({key: activity})
+                            if (!activityDetails) {
+                                throw new Error()
+                            }
+                            if (req.user.preferences[j].time.morning) {
+                                if (isSuggestedActivity(prefMinTemp, prefMaxTemp, morningAvgTemp, preferredWeatherConditions, weatherConditions)) {
+                                    suggestedActivities_MORNING.push({
+                                        key: activity,
+                                        title: activityDetails.title,
+                                        backgroundImageURL: activityDetails.backgroundImageURL
+                                    })
+                                }
+                            }
+                            if (req.user.preferences[j].time.afternoon) {
+                                if (isSuggestedActivity(prefMinTemp, prefMaxTemp, afternoonAvgTemp, preferredWeatherConditions, weatherConditions)) {
+                                    suggestedActivities_AFTERNOON.push({
+                                        key: activity,
+                                        title: activityDetails.title,
+                                        backgroundImageURL: activityDetails.backgroundImageURL
+                                    })
+                                }
+                            }
+                            if (req.user.preferences[j].time.evening) {
+                                if (isSuggestedActivity(prefMinTemp, prefMaxTemp, eveningAvgTemp, preferredWeatherConditions, weatherConditions)) {
+                                    suggestedActivities_EVENING.push({
+                                        key: activity,
+                                        title: activityDetails.title,
+                                        backgroundImageURL: activityDetails.backgroundImageURL
+                                    })
+                                }
                             }
                         }
-                        if (req.user.preferences[j].time.afternoon) {
-                            if (isSuggestedActivity(prefMinTemp, prefMaxTemp, afternoonAvgTemp, preferredWeatherConditions, weatherConditions)) {
-                                suggestedActivities_AFTERNOON.push({
-                                    key: activity,
-                                    title: activityDetails.title,
-                                    backgroundImageURL: activityDetails.backgroundImageURL
-                                })
-                            }
-                        }
-                        if (req.user.preferences[j].time.evening) {
-                            if (isSuggestedActivity(prefMinTemp, prefMaxTemp, eveningAvgTemp, preferredWeatherConditions, weatherConditions)) {
-                                suggestedActivities_EVENING.push({
-                                    key: activity,
-                                    title: activityDetails.title,
-                                    backgroundImageURL: activityDetails.backgroundImageURL
-                                })
-                            }
-                        }
+                        weekActivitySuggestions.push({
+                            id: i,
+                            dayOfWeek,
+                            morningSuggestions: suggestedActivities_MORNING,
+                            afternoonSuggestions: suggestedActivities_AFTERNOON,
+                            eveningSuggestions: suggestedActivities_EVENING
+                        })
                     }
-                    weekActivitySuggestions.push({
-                        id: i,
-                        dayOfWeek,
-                        morningSuggestions: suggestedActivities_MORNING,
-                        afternoonSuggestions: suggestedActivities_AFTERNOON,
-                        eveningSuggestions: suggestedActivities_EVENING
-                    })
+                    res.send(weekActivitySuggestions)
+                } catch (e) {
+                    res.status(500).send()
                 }
-                res.send(weekActivitySuggestions)
             })
         })
     } catch (e) {
