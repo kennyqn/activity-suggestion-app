@@ -19,7 +19,7 @@ const activitySchema = new mongoose.Schema({
         type: mongoose.Schema.Types.Mixed,
         required: true
     },
-    backgroundImageURL: {
+    backgroundImagePath: {
         type: String,
         required: true,
         trim: true

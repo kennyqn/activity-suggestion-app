@@ -66,7 +66,7 @@ router.get('/suggestions', auth, async (req, res) => {
                                     suggestedActivities_MORNING.push({
                                         key: activity,
                                         title: activityDetails.title,
-                                        backgroundImageURL: activityDetails.backgroundImageURL
+                                        backgroundImagePath: activityDetails.backgroundImagePath
                                     })
                                 }
                             }
@@ -75,7 +75,7 @@ router.get('/suggestions', auth, async (req, res) => {
                                     suggestedActivities_AFTERNOON.push({
                                         key: activity,
                                         title: activityDetails.title,
-                                        backgroundImageURL: activityDetails.backgroundImageURL
+                                        backgroundImagePath: activityDetails.backgroundImagePath
                                     })
                                 }
                             }
@@ -84,7 +84,7 @@ router.get('/suggestions', auth, async (req, res) => {
                                     suggestedActivities_EVENING.push({
                                         key: activity,
                                         title: activityDetails.title,
-                                        backgroundImageURL: activityDetails.backgroundImageURL
+                                        backgroundImagePath: activityDetails.backgroundImagePath
                                     })
                                 }
                             }
@@ -163,7 +163,7 @@ router.get('/suggestions/:id', auth, async (req, res) => {
                                 suggestedActivities_MORNING.push({
                                     key: activity,
                                     title: activityDetails.title,
-                                    backgroundImageURL: activityDetails.backgroundImageURL
+                                    backgroundImagePath: activityDetails.backgroundImagePath
                                 })
                             }
                         }
@@ -172,7 +172,7 @@ router.get('/suggestions/:id', auth, async (req, res) => {
                                 suggestedActivities_AFTERNOON.push({
                                     key: activity,
                                     title: activityDetails.title,
-                                    backgroundImageURL: activityDetails.backgroundImageURL
+                                    backgroundImagePath: activityDetails.backgroundImagePath
                                 })
                             }
                         }
@@ -181,7 +181,7 @@ router.get('/suggestions/:id', auth, async (req, res) => {
                                 suggestedActivities_EVENING.push({
                                     key: activity,
                                     title: activityDetails.title,
-                                    backgroundImageURL: activityDetails.backgroundImageURL
+                                    backgroundImagePath: activityDetails.backgroundImagePath
                                 })
                             }
                         }

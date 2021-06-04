@@ -15,6 +15,9 @@ const app = express()
 // automatically parse incoming json to an object to be accessed in request handlers
 app.use(express.json())
 
+// serve public assets such as images
+app.use(express.static('public'))
+
 // register user router
 app.use(userRouter)
 
