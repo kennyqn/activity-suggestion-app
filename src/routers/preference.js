@@ -2,6 +2,7 @@ const express = require('express')
 const router = new express.Router()
 const auth = require('../middleware/auth')
 const Preference = require('../models/preference')
+const Activity = require('../models/activity')
 
 router.post('/preferences', auth, async (req, res) => {
     let chosenActivityDocuments = [];
@@ -12,21 +13,24 @@ router.post('/preferences', auth, async (req, res) => {
 
     try {
         if (chosenActivities.length > 0) {
-            chosenActivityDocuments = chosenActivities.map((activity) => {
+            chosenActivityDocuments = chosenActivities.map(async (activity) => {
+                let activityDetails = await Activity.findOne({key: activity.toLowerCase().replace(' ','_')})
                 return {
-                    activity: activity.toLowerCase().replace(' ','_'),
+                    key: activityDetails.key,
+                    title: activityDetails.title,
                     owner: req.user._id
                 }
             })
 
-            console.log()
             response = await Preference.insertMany(chosenActivityDocuments)
             return res.status(201).send(response)
         }
 
+        let activityDetails = await Activity.findOne({key: req.body.title.toLowerCase().replace(' ','_')})
         const preference = new Preference({
             ...req.body,
-            activity: req.body.activity.toLowerCase().replace(' ','_'),
+            key: activityDetails.key,
+            title: activityDetails.title,
             owner: req.user._id
         })
         await preference.save()

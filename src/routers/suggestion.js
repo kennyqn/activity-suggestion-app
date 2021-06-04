@@ -57,7 +57,7 @@ router.get('/suggestions', auth, async (req, res) => {
                             const prefMaxTemp = req.user.preferences[j].maxTemp;
                             const activity = req.user.preferences[j].activity;
                             let activityDetails = await Activity.findOne({key: activity})
-                            console.log(activity)
+
                             if (!activityDetails) {
                                 throw new Error('Unable to retrieve activity details')
                             }
@@ -99,7 +99,7 @@ router.get('/suggestions', auth, async (req, res) => {
                     }
                     res.send(weekActivitySuggestions)
                 } catch (e) {
-                    res.status(500).send(e)
+                    res.status(500).send()
                 }
             })
         })
@@ -143,51 +143,55 @@ router.get('/suggestions/:id', auth, async (req, res) => {
                         error: error
                     })
                 }
-
-                const morningAvgTemp = forecastData[_id].temp.morn;
-                const afternoonAvgTemp = forecastData[_id].temp.day;
-                const eveningAvgTemp = forecastData[_id].temp.eve;
-
-                const weatherConditions = forecastData[_id].weather;
-                const preferredWeatherConditions = req.user.preferences.conditions;
-                for (i = 0; i < req.user.preferences.length; i++) {
-                    const prefMinTemp = req.user.preferences[i].minTemp;
-                    const prefMaxTemp = req.user.preferences[i].maxTemp;
-                    const activity = req.user.preferences[i].activity;
-                    let activityDetails = await Activity.findOne({key: activity})
-                    if (req.user.preferences[i].time.morning) {
-                        if (isSuggestedActivity(prefMinTemp, prefMaxTemp, morningAvgTemp, preferredWeatherConditions, weatherConditions)) {
-                            suggestedActivities_MORNING.push({
-                                key: activity,
-                                title: activityDetails.title,
-                                backgroundImageURL: activityDetails.backgroundImageURL
-                            })
+                try {
+                    const morningAvgTemp = forecastData[_id].temp.morn;
+                    const afternoonAvgTemp = forecastData[_id].temp.day;
+                    const eveningAvgTemp = forecastData[_id].temp.eve;
+    
+                    const weatherConditions = forecastData[_id].weather;
+                    const preferredWeatherConditions = req.user.preferences.conditions;
+                    for (i = 0; i < req.user.preferences.length; i++) {
+                        const prefMinTemp = req.user.preferences[i].minTemp;
+                        const prefMaxTemp = req.user.preferences[i].maxTemp;
+                        const activity = req.user.preferences[i].activity;
+                        let activityDetails = await Activity.findOne({key: activity})
+                        if (req.user.preferences[i].time.morning) {
+                            if (isSuggestedActivity(prefMinTemp, prefMaxTemp, morningAvgTemp, preferredWeatherConditions, weatherConditions)) {
+                                suggestedActivities_MORNING.push({
+                                    key: activity,
+                                    title: activityDetails.title,
+                                    backgroundImageURL: activityDetails.backgroundImageURL
+                                })
+                            }
+                        }
+                        if (req.user.preferences[i].time.afternoon) {
+                            if (isSuggestedActivity(prefMinTemp, prefMaxTemp, afternoonAvgTemp, preferredWeatherConditions, weatherConditions)) {
+                                suggestedActivities_AFTERNOON.push({
+                                    key: activity,
+                                    title: activityDetails.title,
+                                    backgroundImageURL: activityDetails.backgroundImageURL
+                                })
+                            }
+                        }
+                        if (req.user.preferences[i].time.evening) {
+                            if (isSuggestedActivity(prefMinTemp, prefMaxTemp, eveningAvgTemp, preferredWeatherConditions, weatherConditions)) {
+                                suggestedActivities_EVENING.push({
+                                    key: activity,
+                                    title: activityDetails.title,
+                                    backgroundImageURL: activityDetails.backgroundImageURL
+                                })
+                            }
                         }
                     }
-                    if (req.user.preferences[i].time.afternoon) {
-                        if (isSuggestedActivity(prefMinTemp, prefMaxTemp, afternoonAvgTemp, preferredWeatherConditions, weatherConditions)) {
-                            suggestedActivities_AFTERNOON.push({
-                                key: activity,
-                                title: activityDetails.title,
-                                backgroundImageURL: activityDetails.backgroundImageURL
-                            })
-                        }
-                    }
-                    if (req.user.preferences[i].time.evening) {
-                        if (isSuggestedActivity(prefMinTemp, prefMaxTemp, eveningAvgTemp, preferredWeatherConditions, weatherConditions)) {
-                            suggestedActivities_EVENING.push({
-                                key: activity,
-                                title: activityDetails.title,
-                                backgroundImageURL: activityDetails.backgroundImageURL
-                            })
-                        }
-                    }
+                    res.send({
+                        morningSuggestions: suggestedActivities_MORNING,
+                        afternoonSuggestions: suggestedActivities_AFTERNOON,
+                        eveningSuggestions: suggestedActivities_EVENING
+                    })
+                } catch (e) {
+                    res.status(500).send()
                 }
-                res.send({
-                    morningSuggestions: suggestedActivities_MORNING,
-                    afternoonSuggestions: suggestedActivities_AFTERNOON,
-                    eveningSuggestions: suggestedActivities_EVENING
-                })
+
             })
         })
     } catch (e) {
