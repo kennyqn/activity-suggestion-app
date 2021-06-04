@@ -10,10 +10,15 @@ const placesRouter = require('./routers/places')
 const bookmarkRouter = require('./routers/bookmark')
 const activityRouter = require('./routers/activity')
 
+const cors = require('cors')
+
 const app = express()
 
 // automatically parse incoming json to an object to be accessed in request handlers
 app.use(express.json())
+
+// enable cross-origin resource sharing
+app.use(cors())
 
 // serve public assets such as images
 app.use(express.static('public'))
