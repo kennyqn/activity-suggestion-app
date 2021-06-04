@@ -4,8 +4,11 @@ const auth = require('../middleware/auth')
 const Preference = require('../models/preference')
 
 router.post('/preferences', auth, async (req, res) => {
-    const chosenActivities = req.query.activities.split(',')
     let chosenActivityDocuments = [];
+    let chosenActivities = [];
+    if (req.query.activities) {
+        chosenActivities = req.query.activities.split(',')
+    } 
 
     try {
         if (chosenActivities.length > 0) {
