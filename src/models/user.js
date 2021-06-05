@@ -49,6 +49,12 @@ userSchema.virtual('preferences', {
     foreignField: 'owner'
 })
 
+userSchema.virtual('bookmarks', {
+    ref: 'Bookmark',
+    localField: '_id',
+    foreignField: 'owner'
+})
+
 userSchema.methods.generateAuthToken = async function () {
     const user = this
     const token = jwt.sign({ _id: user._id.toString() }, process.env.JWT_SECRET)
@@ -93,11 +99,19 @@ userSchema.pre("save", async function (next) {
     next()
 })
 
-// Delete user preference when user is removed
+// Delete user preferences when user is removed
 
 userSchema.pre('remove', async function (next) {
     const user = this
     await Preference.deleteMany({ owner: user._id })
+    next()
+})
+
+// Delete user bookmarks when user is removed
+
+userSchema.pre('remove', async function (next) {
+    const user = this
+    await Bookmark.deleteMany({ owner: user._id })
     next()
 })
 

@@ -14,9 +14,11 @@ router.post('/preferences', auth, async (req, res) => {
     try {
         if (chosenActivities.length > 0) {
             for (i = 0; i < chosenActivities.length; i++) {
+                let activityDetails = await Activity.findOne({key: chosenActivities[i]})
                 chosenActivityDocuments.push({
-                    key: chosenActivities[i],
-                    title: keyToTitle(chosenActivities[i]),
+                    key: activityDetails.key,
+                    title: activityDetails.title,
+                    backgroundImagePath: activityDetails.backgroundImagePath,
                     owner: req.user._id
                 })
             }
@@ -30,6 +32,7 @@ router.post('/preferences', auth, async (req, res) => {
             ...req.body,
             key: activityDetails.key,
             title: activityDetails.title,
+            backgroundImagePath: activityDetails.backgroundImagePath,
             owner: req.user._id
         })
         await preference.save()
@@ -66,11 +69,11 @@ router.get('/preferences', auth, async (req, res) => {
     }
 })
 
-router.get('/preferences/:id', auth, async (req, res) => {
-    const _id = req.params.id
+router.get('/preferences/:activity', auth, async (req, res) => {
+    const activity = req.params.activity
 
     try {
-        const preference = await Preference.findOne({ _id, owner: req.user._id })
+        const preference = await Preference.findOne({ key: activity, owner: req.user._id })
         if (!preference) {
             return res.status(404).send()
         }
@@ -80,8 +83,8 @@ router.get('/preferences/:id', auth, async (req, res) => {
     }
 })
 
-router.patch('/preferences/:id', auth, async (req, res) => {
-    const _id = req.params.id
+router.patch('/preferences/:activity', auth, async (req, res) => {
+    const activity = req.params.activity
     const updates = Object.keys(req.body)
     const allowedUpdates = ['minTemp', 'maxTemp', 'conditions', 'time']
     const isValidOperation = updates.every((update) => allowedUpdates.includes(update))
@@ -89,7 +92,7 @@ router.patch('/preferences/:id', auth, async (req, res) => {
         return res.status(400).send({ error: 'Invalid preference updates!'})
     }
     try {
-        const preference = await Preference.findOne({ _id, owner: req.user._id })
+        const preference = await Preference.findOne({ key: activity, owner: req.user._id })
         if (!preference) {
             return res.status(404).send()
         }
@@ -101,10 +104,10 @@ router.patch('/preferences/:id', auth, async (req, res) => {
     }
 })
 
-router.delete('/preferences/:id', auth, async (req, res) => {
-    const _id = req.params.id
+router.delete('/preferences/:activity', auth, async (req, res) => {
+    const activity = req.params.activity
     try {
-        const preference = await Preference.findOneAndDelete({ _id, owner: req.user._id })
+        const preference = await Preference.findOneAndDelete({ key: activity, owner: req.user._id })
         if (!preference) {
             return res.status(404).send()
         }
