@@ -3,7 +3,7 @@ const router = new express.Router()
 const auth = require('../middleware/auth')
 const geocode = require('../utils/geocode.js')
 const forecast = require('../utils/forecast.js')
-const { HazardousConditions } = require('../consts/consts');
+const { HazardousConditions, DaysOfWeek } = require('../consts/consts');
 const Activity = require('../models/activity')
 
 // GET 7 day suggestions
@@ -44,7 +44,9 @@ router.get('/suggestions', auth, async (req, res) => {
     
                         let unix_timestamp = +forecastData[i].dt
                         let date = new Date(unix_timestamp * 1000);
-                        let dayOfWeek = date.getDay()
+                        let dayOfWeek = DaysOfWeek[date.getDay()]
+                        let dayOfMonth = date.getDate();
+                        let month = date.getMonth() + 1;
     
                         const morningAvgTemp = forecastData[i].temp.morn;
                         const afternoonAvgTemp = forecastData[i].temp.day;
@@ -91,7 +93,7 @@ router.get('/suggestions', auth, async (req, res) => {
                         }
                         weekActivitySuggestions.push({
                             id: i,
-                            dayOfWeek,
+                            date: `${dayOfWeek} ${month}/${dayOfMonth}`,
                             morningSuggestions: suggestedActivities_MORNING,
                             afternoonSuggestions: suggestedActivities_AFTERNOON,
                             eveningSuggestions: suggestedActivities_EVENING
