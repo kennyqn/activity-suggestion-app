@@ -33,7 +33,7 @@ router.get("/weather", auth, async (req, res) => {
                     }
 
                     let weekForecast = [];
-                    for (i = 0; i < forecastData.length; i++) {
+                    for (i = 0; i < 7; i++) {
                         let unix_timestamp = +forecastData[i].dt;
                         let date = new Date(unix_timestamp * 1000);
                         let dayOfWeek = DaysOfWeek[date.getDay()]

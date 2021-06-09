@@ -37,7 +37,7 @@ router.get('/suggestions', auth, async (req, res) => {
                 }
                 try {
                     let weekActivitySuggestions = [];
-                    for (i = 0; i < forecastData.length; i++) {
+                    for (i = 0; i < 7; i++) {
                         let suggestedActivities_MORNING = [];
                         let suggestedActivities_AFTERNOON = [];
                         let suggestedActivities_EVENING = [];
