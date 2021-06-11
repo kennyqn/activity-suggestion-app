@@ -15,14 +15,14 @@ const preferenceSchema = new mongoose.Schema({
         type: Number,
         required: true,
         default: function() {
-            return 65;
+            return 55;
         }
     },
     maxTemp: {
         type: Number,
         required: true,
         default: function() {
-            return 75;
+            return 85;
         }
     },
     conditions: {
