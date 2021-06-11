@@ -40,9 +40,11 @@ router.get("/weather", auth, async (req, res) => {
                         let dayOfMonth = date.getDate();
                         let month = date.getMonth() + 1;
 
-                        const morningAvgTemp = forecastData[i].temp.morn;
-                        const afternoonAvgTemp = forecastData[i].temp.day;
-                        const eveningAvgTemp = forecastData[i].temp.eve;
+                        const morningAvgTemp = Math.round(forecastData[i].temp.morn);
+                        const afternoonAvgTemp = Math.round(forecastData[i].temp.day);
+                        const eveningAvgTemp = Math.round(forecastData[i].temp.eve);
+                        const minTemp = Math.round(forecastData[i].temp.min);
+                        const maxTemp = Math.round(forecastData[i].temp.max);
                         const weatherConditions = forecastData[i].weather;
                         weekForecast.push({
                             id: i,
@@ -50,6 +52,8 @@ router.get("/weather", auth, async (req, res) => {
                             morningAvgTemp,
                             afternoonAvgTemp,
                             eveningAvgTemp,
+                            minTemp,
+                            maxTemp,
                             weatherConditions,
                         });
                     }
@@ -115,9 +119,11 @@ router.get("/weather/:id", auth, async (req, res) => {
                         let dayOfMonth = date.getDate();
                         let month = date.getMonth() + 1;
 
-                        const morningAvgTemp = forecastData[_id].temp.morn;
-                        const afternoonAvgTemp = forecastData[_id].temp.day;
-                        const eveningAvgTemp = forecastData[_id].temp.eve;
+                        const morningAvgTemp = Math.round(forecastData[_id].temp.morn);
+                        const afternoonAvgTemp = Math.round(forecastData[_id].temp.day);
+                        const eveningAvgTemp = Math.round(forecastData[_id].temp.eve);
+                        const minTemp = Math.round(forecastData[_id].temp.min);
+                        const maxTemp = Math.round(forecastData[_id].temp.max);
                         const weatherConditions = forecastData[_id].weather;
 
                         res.send({
@@ -126,6 +132,8 @@ router.get("/weather/:id", auth, async (req, res) => {
                             morningAvgTemp,
                             afternoonAvgTemp,
                             eveningAvgTemp,
+                            minTemp,
+                            maxTemp,
                             weatherConditions,
                         });
                     }
