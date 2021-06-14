@@ -104,7 +104,7 @@ router.get("/weather/:id", auth, async (req, res) => {
                         let dayOfMonth = date.getDate();
                         let month = date.getMonth() + 1;
 
-                        const currentTemp = forecastData.temp;
+                        const currentTemp = Math.round(forecastData.temp);
                         const currentWeather = forecastData.weather;
 
                         res.send({
