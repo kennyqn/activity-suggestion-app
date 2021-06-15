@@ -2,7 +2,7 @@ const request = require('request')
 
 // wantCurrentWeather is a bool: if true, return current weather, else return 7 day forecast
 const forecast = (latitude, longitude, wantCurrentWeather, callback) => {
-    const url = 'https://cors-anywhere.herokuapp.com/https://api.openweathermap.org/data/2.5/onecall?units=imperial&exclude=minutely,hourly&appid=' + process.env.OPENWEATHER_API_KEY + '&lat=' + latitude + '&lon=' + longitude
+    const url = 'https://api.openweathermap.org/data/2.5/onecall?units=imperial&exclude=minutely,hourly&appid=' + process.env.OPENWEATHER_API_KEY + '&lat=' + latitude + '&lon=' + longitude
     request({ url, json: true }, (error, { body }) => {
         if (error) {
             callback('Unable to connect to weather service!')
