@@ -35,11 +35,17 @@ router.get("/weather", auth, async (req, res) => {
                     for (i = 0; i < 7; i++) {
                         let unix_timestamp = +forecastData[i].dt;
                         let date = new Date(unix_timestamp * 1000);
-                        let dayOfWeek = date.getDay()
+                        let dayOfWeek = date.getDay();
 
-                        const morningAvgTemp = Math.round(forecastData[i].temp.morn);
-                        const afternoonAvgTemp = Math.round(forecastData[i].temp.day);
-                        const eveningAvgTemp = Math.round(forecastData[i].temp.eve);
+                        const morningAvgTemp = Math.round(
+                            forecastData[i].temp.morn
+                        );
+                        const afternoonAvgTemp = Math.round(
+                            forecastData[i].temp.day
+                        );
+                        const eveningAvgTemp = Math.round(
+                            forecastData[i].temp.eve
+                        );
                         const minTemp = Math.round(forecastData[i].temp.min);
                         const maxTemp = Math.round(forecastData[i].temp.max);
                         const weatherConditions = forecastData[i].weather;
@@ -66,10 +72,9 @@ router.get("/weather", auth, async (req, res) => {
     }
 });
 
-// id === day 0-6 OR 'current'
+// id === day 0-6 -- if day 0 (today), then we also get the current temp
 router.get("/weather/:id", auth, async (req, res) => {
     const _id = req.params.id;
-    wantCurrent = _id === "current";
     try {
         address = req.query.address;
         if (!address) {
@@ -87,38 +92,43 @@ router.get("/weather/:id", auth, async (req, res) => {
             forecast(
                 latitude,
                 longitude,
-                wantCurrent,
                 async (error, forecastData) => {
                     if (error) {
                         return res.send({
                             error: error,
                         });
                     }
-                    if (wantCurrent) {
-                        let unix_timestamp = +forecastData.dt;
-                        let date = new Date(unix_timestamp * 1000);
-                        let dayOfWeek = date.getDay()
 
-                        const currentTemp = Math.round(forecastData.temp);
-                        const currentWeather = forecastData.weather;
+                    let unix_timestamp = +forecastData[_id].dt;
+                    let date = new Date(unix_timestamp * 1000);
+                    let dayOfWeek = date.getDay();
 
+                    const morningAvgTemp = Math.round(
+                        forecastData[_id].temp.morn
+                    );
+                    const afternoonAvgTemp = Math.round(
+                        forecastData[_id].temp.day
+                    );
+                    const eveningAvgTemp = Math.round(
+                        forecastData[_id].temp.eve
+                    );
+                    const minTemp = Math.round(forecastData[_id].temp.min);
+                    const maxTemp = Math.round(forecastData[_id].temp.max);
+                    const weatherConditions = forecastData[_id].weather;
+
+                    if (_id === '0') {
                         res.send({
+                            id: _id,
                             dayOfWeek,
-                            currentTemp,
-                            currentWeather,
+                            currentTemp: Math.round(forecastData.currentTemp),
+                            morningAvgTemp,
+                            afternoonAvgTemp,
+                            eveningAvgTemp,
+                            minTemp,
+                            maxTemp,
+                            weatherConditions,
                         });
                     } else {
-                        let unix_timestamp = +forecastData[_id].dt;
-                        let date = new Date(unix_timestamp * 1000);
-                        let dayOfWeek = date.getDay()
-
-                        const morningAvgTemp = Math.round(forecastData[_id].temp.morn);
-                        const afternoonAvgTemp = Math.round(forecastData[_id].temp.day);
-                        const eveningAvgTemp = Math.round(forecastData[_id].temp.eve);
-                        const minTemp = Math.round(forecastData[_id].temp.min);
-                        const maxTemp = Math.round(forecastData[_id].temp.max);
-                        const weatherConditions = forecastData[_id].weather;
-
                         res.send({
                             id: _id,
                             dayOfWeek,

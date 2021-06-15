@@ -1,21 +1,25 @@
-const request = require('request')
+const request = require("request");
 
-// wantCurrentWeather is a bool: if true, return current weather, else return 7 day forecast
-const forecast = (latitude, longitude, wantCurrentWeather, callback) => {
-    const url = 'https://api.openweathermap.org/data/2.5/onecall?units=imperial&exclude=minutely,hourly&appid=' + process.env.OPENWEATHER_API_KEY + '&lat=' + latitude + '&lon=' + longitude
+const forecast = (latitude, longitude, callback) => {
+    const url =
+        "https://api.openweathermap.org/data/2.5/onecall?units=imperial&exclude=minutely,hourly&appid=" +
+        process.env.OPENWEATHER_API_KEY +
+        "&lat=" +
+        latitude +
+        "&lon=" +
+        longitude;
     request({ url, json: true }, (error, { body }) => {
         if (error) {
-            callback('Unable to connect to weather service!')
+            callback("Unable to connect to weather service!");
         } else if (body.error) {
-            callback('Unable to find location')
+            callback("Unable to find location");
         } else {
-            if (wantCurrentWeather) {
-                callback(undefined, body.current)
-            } else {
-                callback(undefined, body.daily)
-            }
+            callback(undefined, {
+                ...body.daily,
+                currentTemp: body.current.temp,
+            });
         }
-    })
-}
+    });
+};
 
-module.exports = forecast
+module.exports = forecast;
