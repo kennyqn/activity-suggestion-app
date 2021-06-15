@@ -23,7 +23,6 @@ router.get("/weather", auth, async (req, res) => {
             forecast(
                 latitude,
                 longitude,
-                false,
                 async (error, forecastData) => {
                     if (error) {
                         return res.send({
