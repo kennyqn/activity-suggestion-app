@@ -3,7 +3,6 @@ const router = new express.Router();
 const auth = require("../middleware/auth");
 const geocode = require("../utils/geocode.js");
 const forecast = require("../utils/forecast.js");
-const { DaysOfWeek } = require("../consts/consts")
 
 // GET 7 day forecast
 router.get("/weather", auth, async (req, res) => {
@@ -36,9 +35,7 @@ router.get("/weather", auth, async (req, res) => {
                     for (i = 0; i < 7; i++) {
                         let unix_timestamp = +forecastData[i].dt;
                         let date = new Date(unix_timestamp * 1000);
-                        let dayOfWeek = DaysOfWeek[date.getDay()]
-                        let dayOfMonth = date.getDate();
-                        let month = date.getMonth() + 1;
+                        let dayOfWeek = date.getDay()
 
                         const morningAvgTemp = Math.round(forecastData[i].temp.morn);
                         const afternoonAvgTemp = Math.round(forecastData[i].temp.day);
@@ -48,7 +45,7 @@ router.get("/weather", auth, async (req, res) => {
                         const weatherConditions = forecastData[i].weather;
                         weekForecast.push({
                             id: i,
-                            date: `${dayOfWeek} ${month}/${dayOfMonth}`,
+                            dayOfWeek,
                             morningAvgTemp,
                             afternoonAvgTemp,
                             eveningAvgTemp,
@@ -100,24 +97,20 @@ router.get("/weather/:id", auth, async (req, res) => {
                     if (wantCurrent) {
                         let unix_timestamp = +forecastData.dt;
                         let date = new Date(unix_timestamp * 1000);
-                        let dayOfWeek = DaysOfWeek[date.getDay()]
-                        let dayOfMonth = date.getDate();
-                        let month = date.getMonth() + 1;
+                        let dayOfWeek = date.getDay()
 
                         const currentTemp = Math.round(forecastData.temp);
                         const currentWeather = forecastData.weather;
 
                         res.send({
-                            date: `${dayOfWeek} ${month}/${dayOfMonth}`,
+                            dayOfWeek,
                             currentTemp,
                             currentWeather,
                         });
                     } else {
                         let unix_timestamp = +forecastData[_id].dt;
                         let date = new Date(unix_timestamp * 1000);
-                        let dayOfWeek = DaysOfWeek[date.getDay()]
-                        let dayOfMonth = date.getDate();
-                        let month = date.getMonth() + 1;
+                        let dayOfWeek = date.getDay()
 
                         const morningAvgTemp = Math.round(forecastData[_id].temp.morn);
                         const afternoonAvgTemp = Math.round(forecastData[_id].temp.day);
@@ -128,7 +121,7 @@ router.get("/weather/:id", auth, async (req, res) => {
 
                         res.send({
                             id: _id,
-                            date: `${dayOfWeek} ${month}/${dayOfMonth}`,
+                            dayOfWeek,
                             morningAvgTemp,
                             afternoonAvgTemp,
                             eveningAvgTemp,
