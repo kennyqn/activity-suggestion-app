@@ -4,6 +4,10 @@ const auth = require('../middleware/auth')
 const geocode = require('../utils/geocode.js')
 const searchForPlaces = require('../utils/search')
 const Activity = require('../models/activity')
+var cors = require('cors')
+var app = express()
+ 
+app.use(cors())
 
 router.get('/places', auth, async (req, res) => {
     try {

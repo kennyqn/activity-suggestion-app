@@ -3,6 +3,10 @@ const router = new express.Router()
 const auth = require('../middleware/auth')
 const Preference = require('../models/preference')
 const Activity = require('../models/activity')
+var cors = require('cors')
+var app = express()
+ 
+app.use(cors())
 
 router.post('/preferences', auth, async (req, res) => {
     let chosenActivityDocuments = [];

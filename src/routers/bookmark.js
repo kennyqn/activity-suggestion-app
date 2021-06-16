@@ -2,6 +2,10 @@ const express = require('express')
 const router = new express.Router()
 const auth = require('../middleware/auth')
 const Bookmark = require('../models/bookmark')
+var cors = require('cors')
+var app = express()
+ 
+app.use(cors())
 
 router.post('/bookmarks', auth, async (req, res) => {
     const bookmark = new Bookmark({

@@ -3,6 +3,10 @@ const router = new express.Router()
 const auth = require('../middleware/auth')
 const { sendWelcomeEmail, sendCancellationEmail } = require('../emails/account')
 const User = require('../models/user')
+var cors = require('cors')
+var app = express()
+ 
+app.use(cors())
 
 router.post('/users', async (req, res) => {
     const user = new User(req.body)

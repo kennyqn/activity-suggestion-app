@@ -3,6 +3,10 @@ const router = new express.Router();
 const auth = require("../middleware/auth");
 const geocode = require("../utils/geocode.js");
 const forecast = require("../utils/forecast.js");
+var cors = require('cors')
+var app = express()
+ 
+app.use(cors())
 
 // GET 7 day forecast
 router.get("/weather", auth, async (req, res) => {

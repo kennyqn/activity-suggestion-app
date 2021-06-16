@@ -5,6 +5,10 @@ const geocode = require('../utils/geocode.js')
 const forecast = require('../utils/forecast.js')
 const { HazardousConditions, DaysOfWeek } = require('../consts/consts');
 const Activity = require('../models/activity')
+var cors = require('cors')
+var app = express()
+ 
+app.use(cors())
 
 // GET 7 day suggestions
 router.get('/suggestions', auth, async (req, res) => {

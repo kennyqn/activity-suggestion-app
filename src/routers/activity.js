@@ -2,6 +2,10 @@ const express = require('express')
 const router = new express.Router()
 const auth = require('../middleware/auth')
 const Activity = require('../models/activity')
+var cors = require('cors')
+var app = express()
+ 
+app.use(cors())
 
 router.get('/activities', auth, async (req, res) => {
     try {
