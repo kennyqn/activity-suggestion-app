@@ -7,7 +7,7 @@ const sendWelcomeEmail = (email, name) => {
         to: email,
         from: 'alex.trejo@boredaf.io',
         subject: 'Thanks for joining in!',
-        text: `Welcome to the app, ${name}. Let me know how you get along with the app.`
+        html: `<p>Welcome to BOREDAF, ${name}. Let me know how you get along with the app.</p><br /><hr />Best,<br/><strong>Alejandro Trejo</strong><br />www.boredaf.io`
     })
 }
 
@@ -16,7 +16,7 @@ const sendCancellationEmail = (email, name) => {
         to: email,
         from: 'alex.trejo@boredaf.io',
         subject: 'Sorry to see you go',
-        text: `Sorry to see you go, ${name}. Please let us know what we could do to improve.`
+        html: `<p>Sorry to see you go, ${name}. Please let us know what we could do to improve.</p><br /><hr />Best,<br/><strong>Alejandro Trejo</strong><br />www.boredaf.io`
     })
 }
 
